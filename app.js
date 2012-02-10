@@ -45,49 +45,55 @@ app.get('/callback', function(req, res){
 	function createTasks(){
 		var tasks = {};
 		tasks.userGetInfo = function(callback){
-			lastFmRequest('user.getInfo', {}, session, callback);
+			lastFmRequest('user.getInfo', {}, callback);
+		};
+
+		tasks.userGetFriends = function(callback){
+			lastFmRequest('user.getFriends', { user: session.user }, callback)
 		};
 
 		tasks.userGetTopArtists = function(callback){
-			lastFmRequest('user.getTopArtists', { user: session.user }, session, callback);
+			lastFmRequest('user.getTopArtists', { user: session.user }, callback);
 		};
 
 		tasks.userGetTopAlbums = function(callback){
-			lastFmRequest('user.getTopAlbums', {user: session.user}, session, callback);
+			lastFmRequest('user.getTopAlbums', {user: session.user}, callback);
 		};
 
 		tasks.userGetPlaylists = function(callback){
-			lastFmRequest('user.getPlaylists', { user: session.user }, session, callback);
+			lastFmRequest('user.getPlaylists', { user: session.user }, callback);
 		};
 
 		tasks.userGetTopTracks = function(callback){
-			lastFmRequest('user.getTopTracks', { user: session.user }, session, callback);
+			lastFmRequest('user.getTopTracks', { user: session.user }, callback);
 		};
 
 		tasks.userGetLovedTracks = function(callback){
-			lastFmRequest('user.getLovedTracks', { user: session.user }, session, callback);
+			lastFmRequest('user.getLovedTracks', { user: session.user }, callback);
 		};
 
 		tasks.userGetRecentTracks = function(callback){
-			lastFmRequest('user.getRecentTracks', { user: session.user }, session, callback );
+			lastFmRequest('user.getRecentTracks', { user: session.user }, callback );
 		};
 
 		return tasks;
 	}
+
+	function lastFmRequest(method, parameters, callback){
+		parameters.signed = true;
+		parameters.sk = session.key;
+		var request = lastfm.request(method, parameters);
+		request.on('success', function(data){
+			callback(null, data);
+		});
+
+		request.on('error', function(err){
+			callback(null, err);
+		});
+	}
 });
 
-function lastFmRequest(method, parameters, session, callback){
-	parameters.signed = true;
-	parameters.sk = session.key;
-	var request = lastfm.request(method, parameters);
-	request.on('success', function(data){
-		callback(null, data);
-	});
 
-	request.on('error', function(err){
-		callback(null, err);
-	});
-}
 
 app.listen(process.env.PORT || 80);
 
