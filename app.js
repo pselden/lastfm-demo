@@ -1,6 +1,7 @@
 var express = require('express');
 var LastFmNode = require('lastfm').LastFmNode;
 var qs = require('querystring');
+var async = require('async');
 var app = express.createServer();
 
 var apiKey = '9d91f7e475e58b5c549df4b2d403a1c7';
@@ -30,9 +31,63 @@ app.get('/', function (req, res) {
 
 app.get('/callback', function(req, res){
 	var token = req.query.token;
-	console.log(token);
-	res.render('callback', { data: token});
+	var session = lastfm.session();
+
+	session.authorise(token);
+	session.on('authorised', onAuthorize);
+	function onAuthorize(){
+		var tasks = createTasks();
+		async.parallel(tasks, function(err, results){
+			res.render('callback', { data: results });
+		});
+	}
+
+	function createTasks(){
+		var tasks = {};
+		tasks.userGetInfo = function(callback){
+			lastFmRequest('user.getInfo', {}, session, callback);
+		};
+
+		tasks.userGetTopArtists = function(callback){
+			lastFmRequest('user.getTopArtists', { user: session.user }, session, callback);
+		};
+
+		tasks.userGetTopAlbums = function(callback){
+			lastFmRequest('user.getTopAlbums', {user: session.user}, session, callback);
+		};
+
+		tasks.userGetPlaylists = function(callback){
+			lastFmRequest('user.getPlaylists', { user: session.user }, session, callback);
+		};
+
+		tasks.userGetTopTracks = function(callback){
+			lastFmRequest('user.getTopTracks', { user: session.user }, session, callback);
+		};
+
+		tasks.userGetLovedTracks = function(callback){
+			lastFmRequest('user.getLovedTracks', { user: session.user }, session, callback);
+		};
+
+		tasks.userGetRecentTracks = function(callback){
+			lastFmRequest('user.getRecentTracks', { user: session.user }, session, callback );
+		};
+
+		return tasks;
+	}
 });
+
+function lastFmRequest(method, parameters, session, callback){
+	parameters.signed = true;
+	parameters.sk = session.key;
+	var request = lastfm.request(method, parameters);
+	request.on('success', function(data){
+		callback(null, data);
+	});
+
+	request.on('error', function(err){
+		callback(null, err);
+	});
+}
 
 app.listen(80);
 
