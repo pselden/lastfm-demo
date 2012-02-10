@@ -22,7 +22,7 @@ app.configure(function () {
 });
 
 app.get('/', function (req, res) {
-	var callbackUrl = 'http://localhost/callback';
+	var callbackUrl = 'http://localhost:' + app.address().port + '/callback';
 	var obj = { api_key: apiKey , cb: callbackUrl };
 	var query = qs.stringify(obj);
 	var url = 'http://www.last.fm/api/auth/' + '?' + query;
@@ -89,6 +89,6 @@ function lastFmRequest(method, parameters, session, callback){
 	});
 }
 
-app.listen(80);
+app.listen(process.env.PORT || 80);
 
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
