@@ -22,7 +22,7 @@ app.configure(function () {
 });
 
 app.get('/', function (req, res) {
-	var callbackUrl = 'http://localhost:' + app.address().port + '/callback';
+	var callbackUrl = 'http://' + req.header('host') + ':' + app.address().port + '/callback';
 	var obj = { api_key: apiKey , cb: callbackUrl };
 	var query = qs.stringify(obj);
 	var url = 'http://www.last.fm/api/auth/' + '?' + query;
