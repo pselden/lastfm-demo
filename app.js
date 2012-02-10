@@ -76,6 +76,34 @@ app.get('/callback', function(req, res){
 			lastFmRequest('user.getRecentTracks', { user: session.user }, callback );
 		};
 
+		tasks.userGetWeeklyArtistChart = function(callback){
+			lastFmRequest('user.getWeeklyArtistChart', {user: session.user }, callback );
+		};
+
+		tasks.userGetWeeklyAlbumChart = function(callback){
+			lastFmRequest('user.getWeeklyAlbumChart', {user: session.user }, callback );
+		};
+
+		tasks.userGetWeeklyTrackChart = function(callback){
+			lastFmRequest('user.getWeeklyTrackChart', {user: session.user }, callback );
+		};
+
+		tasks.userGetWeeklyTrackChart = function(callback){
+			lastFmRequest('user.getWeeklyTrackChart', {user: session.user }, callback );
+		};
+
+		tasks.userGetRecentStations = function(callback){
+			lastFmRequest('user.getRecentStations', { user: session.user}, callback );
+		};
+
+		tasks.userGetEvents = function(callback){
+			lastFmRequest('user.getEvents', { user: session.user }, callback);
+		};
+
+		tasks.userGetBannedTracks = function(callback){
+			lastFmRequest('user.getBannedTracks', { user: session.user }, callback);
+		};
+
 		return tasks;
 	}
 
