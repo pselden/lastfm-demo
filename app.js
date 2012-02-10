@@ -12,8 +12,8 @@ app.configure(function () {
 	app.use(app.router);
 });
 
-app.get('/', function () {
-
+app.get('/', function (req, res) {
+	res.render('home')
 });
 
 app.listen(80);
